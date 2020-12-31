@@ -1,0 +1,24 @@
+{
+  "name": "wanikani-exporter",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "axios": "^0.20.0",
+    "class-transformer": "^0.3.1",
+    "tslint": "^6.1.3",
+    "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "@types/node": "^14.10.1",
+    "es6-shim": "^0.35.5",
+    "reflect-metadata": "^0.1.13"
+  }
+}
