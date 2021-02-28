@@ -51,7 +51,6 @@ export class Collection<R extends Resource<unknown>> extends Response<R[]> {
             }
             requestUrl(this.pages.next_url as string)
             .then((axiosResponse: AxiosResponse<unknown>) => {
-                console.log(axiosResponse);
                 const collection = plainToClassFromExist(new Collection<R>(this.type), axiosResponse.data);
                 resolve(collection);
             })

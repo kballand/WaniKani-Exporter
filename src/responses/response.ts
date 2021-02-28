@@ -9,7 +9,7 @@ export abstract class Response<D> {
     url?: string;
     data_updated_at: string;
 
-    @Type(options => { return (options?.newObject as Response<D>).type; })
+    @Type(options => { return (options?.newObject as Response<D>)?.type; })
     data: D;
 
     constructor(type: Function) {
