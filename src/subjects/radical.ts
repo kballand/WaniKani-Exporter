@@ -1,20 +1,66 @@
+import { AxiosResponse } from "axios";
+import { plainToClassFromExist } from "class-transformer";
+import { requestUrl } from "../helpers/helper";
+import { Collection } from "../responses/collection";
 import { Subject, SubjectContent } from "./subject";
-import  { createWriteStream, promises as fs } from "fs";
-import axios, { AxiosResponse } from 'axios';
-import { Stream } from "stream";
-import * as path from "path";
 
 export class Radical extends Subject<RadicalContent> {
     object: "radical";
 
     toCSV() {
         let csv: string = "";
-        if(this.data.characters) {
+        if (this.data.characters) {
             csv += this.data.characters;
             csv += ";" + this.data.meanings.map((m) => m.meaning).join(",");
             csv += ";" + this.data.level;
         }
         return csv;
+    }
+
+    static getAllRadicals(): Promise<Collection<Radical>> {
+        return new Promise<Collection<Radical>>((resolve, reject) => {
+            const apiEndpointPath = 'https://api.wanikani.com/v2/subjects?types=radical';
+            requestUrl(apiEndpointPath)
+                .then((axiosResponse: AxiosResponse<unknown>) => {
+                    let collection = plainToClassFromExist(new Collection<Radical>(Radical), axiosResponse.data);
+                    collection.combinePages()
+                        .then(collectionsCombined => {
+                            collectionsCombined.sort((a, b) => {
+                                if (a.data.level != b.data.level) {
+                                    return a.data.level - b.data.level;
+                                } else {
+                                    return a.id - b.id;
+                                }
+                            });
+                            resolve(collectionsCombined);
+                        })
+                        .catch(reject);
+                })
+                .catch(reject);
+        });
+    }
+
+    static getRadicals(ids: number[]): Promise<Collection<Radical>> {
+        return new Promise<Collection<Radical>>((resolve, reject) => {
+            const apiEndpointPath = `https://api.wanikani.com/v2/subjects?ids=${ids.join()}&types=radical`;
+            requestUrl(apiEndpointPath)
+                .then((axiosResponse: AxiosResponse<unknown>) => {
+                    let collection = plainToClassFromExist(new Collection<Radical>(Radical), axiosResponse.data);
+                    collection.combinePages()
+                        .then(collectionsCombined => {
+                            collectionsCombined.sort((a, b) => {
+                                if (a.data.level != b.data.level) {
+                                    return a.data.level - b.data.level;
+                                } else {
+                                    return a.id - b.id;
+                                }
+                            });
+                            resolve(collectionsCombined);
+                        })
+                        .catch(reject);
+                })
+                .catch(reject);
+        });
     }
 }
 

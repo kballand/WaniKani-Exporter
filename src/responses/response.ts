@@ -1,5 +1,5 @@
 import { Exclude, Type } from "class-transformer";
-import  { writeFile } from "fs";
+import { writeFile } from "fs";
 
 export abstract class Response<D> {
     @Exclude()
@@ -7,7 +7,7 @@ export abstract class Response<D> {
 
     object: ObjectType;
     url?: string;
-    data_updated_at: string;
+    data_updated_at?: string;
 
     @Type(options => { return (options?.newObject as Response<D>)?.type; })
     data: D;
@@ -21,7 +21,7 @@ export abstract class Response<D> {
     exportCSV(fileName: string) {
         const csv = this.toCSV();
         writeFile(fileName, csv, (error) => {
-            if(error) {
+            if (error) {
                 console.error(`Failed to create or open file : ${fileName} !`);
             }
         });
@@ -29,7 +29,7 @@ export abstract class Response<D> {
 }
 
 export type ObjectType = 'collection' | 'report' | 'assignment' | 'kanji' |
-                        'level_progression' | 'radical' | 'reset' |
-                        'review_statistic' | 'review' |
-                        'spaced_repetition_system' | 'study_material' |
-                        'user' | 'vocabulary';
+    'level_progression' | 'radical' | 'reset' |
+    'review_statistic' | 'review' |
+    'spaced_repetition_system' | 'study_material' |
+    'user' | 'vocabulary';

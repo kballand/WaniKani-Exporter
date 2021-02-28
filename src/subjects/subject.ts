@@ -1,5 +1,6 @@
 import { Resource } from "../responses/resource";
 
+
 export abstract class Subject<D extends SubjectContent> extends Resource<D> {
 
 }

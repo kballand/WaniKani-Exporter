@@ -1,3 +1,7 @@
+import { AxiosResponse } from "axios";
+import { plainToClassFromExist } from "class-transformer";
+import { requestUrl } from "../helpers/helper";
+import { Collection } from "../responses/collection";
 import { Subject, SubjectContent } from "./subject";
 
 export class Vocabulary extends Subject<VocabularyContent> {
@@ -9,6 +13,52 @@ export class Vocabulary extends Subject<VocabularyContent> {
         csv += ";" + this.data.readings.map((r) => r.reading).join(",");
         csv += ";" + this.data.level;
         return csv;
+    }
+
+    static getAllVocabulary(): Promise<Collection<Vocabulary>> {
+        return new Promise<Collection<Vocabulary>>((resolve, reject) => {
+            const apiEndpointPath = 'https://api.wanikani.com/v2/subjects?types=vocabulary';
+            requestUrl(apiEndpointPath)
+                .then((axiosResponse: AxiosResponse<unknown>) => {
+                    let collection = plainToClassFromExist(new Collection<Vocabulary>(Vocabulary), axiosResponse.data);
+                    collection.combinePages()
+                        .then(collectionsCombined => {
+                            collectionsCombined.sort((a, b) => {
+                                if (a.data.level != b.data.level) {
+                                    return a.data.level - b.data.level;
+                                } else {
+                                    return a.id - b.id;
+                                }
+                            });
+                            resolve(collectionsCombined);
+                        })
+                        .catch(reject);
+                })
+                .catch(reject);
+        });
+    }
+
+    static getVocabularies(ids: number[]): Promise<Collection<Vocabulary>> {
+        return new Promise<Collection<Vocabulary>>((resolve, reject) => {
+            const apiEndpointPath = `https://api.wanikani.com/v2/subjects?ids=${ids.join()}&types=vocabulary`;
+            requestUrl(apiEndpointPath)
+                .then((axiosResponse: AxiosResponse<unknown>) => {
+                    let collection = plainToClassFromExist(new Collection<Vocabulary>(Vocabulary), axiosResponse.data);
+                    collection.combinePages()
+                        .then(collectionsCombined => {
+                            collectionsCombined.sort((a, b) => {
+                                if (a.data.level != b.data.level) {
+                                    return a.data.level - b.data.level;
+                                } else {
+                                    return a.id - b.id;
+                                }
+                            });
+                            resolve(collectionsCombined);
+                        })
+                        .catch(reject);
+                })
+                .catch(reject);
+        });
     }
 }
 

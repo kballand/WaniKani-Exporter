@@ -1,24 +1,24 @@
 import 'reflect-metadata';
 import 'es6-shim';
-import { AxiosResponse } from 'axios';
-import { plainToClassFromExist } from 'class-transformer';
-import { Collection } from './responses/collection';
 import { Radical } from './subjects/radical';
 import { Kanji } from './subjects/kanji';
 import { Vocabulary } from './subjects/vocabulary';
-import { requestUrl } from './helpers/helper';
+import { Assignment } from './assigments/assignments';
 
-const apiEndpointPath = 'https://api.wanikani.com/v2/subjects?levels=1,2,3,4,5,6,7,8,9,10,11&types=radical';
+Assignment.getKanjiAssignments()
+    .then(kanjiAssignments => kanjiAssignments.data.map(kanjiAssignment => kanjiAssignment.data.subject_id))
+    .then(Kanji.getKanjis)
+    .then(kanji => kanji.exportCSV("data/kanji.csv"))
+    .catch(error => { console.log(error) });
 
-requestUrl(apiEndpointPath)
-    .then((axiosResponse: AxiosResponse<unknown>) => {
-        let collection = plainToClassFromExist(new Collection<Radical>(Radical), axiosResponse.data);
-        collection.combinePages()
-            .then((collectionsCombined) => {
-                return collectionsCombined.exportCSV("data/radical.csv");
-            });
-    })
-    .catch(error => {
-        console.log(error)
-    });
+Assignment.getRadicalAssignments()
+    .then(radicalAssignments => radicalAssignments.data.map(radicalAssignment => radicalAssignment.data.subject_id))
+    .then(Radical.getRadicals)
+    .then(radicals => radicals.exportCSV("data/radical.csv"))
+    .catch(error => { console.log(error) });
 
+Assignment.getVocabularyAssignments()
+    .then(vocabularyAssignments => vocabularyAssignments.data.map(vocabularyAssignment => vocabularyAssignment.data.subject_id))
+    .then(Vocabulary.getVocabularies)
+    .then(vocabulary => vocabulary.exportCSV("data/vocabulary.csv"))
+    .catch(error => { console.log(error) });

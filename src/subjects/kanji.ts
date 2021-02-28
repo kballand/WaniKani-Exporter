@@ -1,3 +1,7 @@
+import { AxiosResponse } from "axios";
+import { plainToClassFromExist } from "class-transformer";
+import { requestUrl } from "../helpers/helper";
+import { Collection } from "../responses/collection";
 import { Subject, SubjectContent } from "./subject";
 
 export class Kanji extends Subject<KanjiContent> {
@@ -9,9 +13,9 @@ export class Kanji extends Subject<KanjiContent> {
         let onyomi: string[] = [];
         let kunyomi: string[] = [];
         this.data.readings.forEach((reading) => {
-            if(reading.type === 'onyomi') {
+            if (reading.type === 'onyomi') {
                 onyomi.push(reading.reading);
-             } else if(reading.type == 'kunyomi') {
+            } else if (reading.type == 'kunyomi') {
                 kunyomi.push(reading.reading);
             }
         });
@@ -19,6 +23,52 @@ export class Kanji extends Subject<KanjiContent> {
         csv += ";" + kunyomi.join(",");
         csv += ";" + this.data.level;
         return csv;
+    }
+
+    static getAllKanji(): Promise<Collection<Kanji>> {
+        return new Promise<Collection<Kanji>>((resolve, reject) => {
+            const apiEndpointPath = 'https://api.wanikani.com/v2/subjects?types=kanji';
+            requestUrl(apiEndpointPath)
+                .then((axiosResponse: AxiosResponse<unknown>) => {
+                    let collection = plainToClassFromExist(new Collection<Kanji>(Kanji), axiosResponse.data);
+                    collection.combinePages()
+                        .then(collectionsCombined => {
+                            collectionsCombined.sort((a, b) => {
+                                if (a.data.level != b.data.level) {
+                                    return a.data.level - b.data.level;
+                                } else {
+                                    return a.id - b.id;
+                                }
+                            });
+                            resolve(collectionsCombined);
+                        })
+                        .catch(reject);
+                })
+                .catch(reject);
+        });
+    }
+
+    static getKanjis(ids: number[]): Promise<Collection<Kanji>> {
+        return new Promise<Collection<Kanji>>((resolve, reject) => {
+            const apiEndpointPath = `https://api.wanikani.com/v2/subjects?ids=${ids.join()}&types=kanji`;
+            requestUrl(apiEndpointPath)
+                .then((axiosResponse: AxiosResponse<unknown>) => {
+                    let collection = plainToClassFromExist(new Collection<Kanji>(Kanji), axiosResponse.data);
+                    collection.combinePages()
+                        .then(collectionsCombined => {
+                            collectionsCombined.sort((a, b) => {
+                                if (a.data.level != b.data.level) {
+                                    return a.data.level - b.data.level;
+                                } else {
+                                    return a.id - b.id;
+                                }
+                            });
+                            resolve(collectionsCombined);
+                        })
+                        .catch(reject);
+                })
+                .catch(reject);
+        });
     }
 }
 
