@@ -40,16 +40,15 @@ export class Collection<R extends Resource<unknown>> extends Response<R[]> {
             if (!this.hasNextPage()) {
                 reject();
             } else {
-
+                requestUrl(decodeURIComponent((this.pages as Pagination).next_url as string))
+                    .then((axiosResponse: AxiosResponse<unknown>) => {
+                        const collection = plainToClassFromExist(new Collection<R>(this.type), axiosResponse.data);
+                        resolve(collection);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             }
-            requestUrl((this.pages as Pagination).next_url as string)
-                .then((axiosResponse: AxiosResponse<unknown>) => {
-                    const collection = plainToClassFromExist(new Collection<R>(this.type), axiosResponse.data);
-                    resolve(collection);
-                })
-                .catch(error => {
-                    reject(error);
-                })
         });
     }
 
@@ -61,15 +60,16 @@ export class Collection<R extends Resource<unknown>> extends Response<R[]> {
         return new Promise<Collection<R>>((resolve, reject) => {
             if (!this.hasPreviousPage()) {
                 reject();
+            } else {
+                requestUrl(decodeURIComponent((this.pages as Pagination).previous_url as string))
+                    .then((axiosResponse: AxiosResponse<unknown>) => {
+                        const collection = plainToClassFromExist(new Collection<R>(this.type), axiosResponse.data);
+                        resolve(collection);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             }
-            requestUrl((this.pages as Pagination).previous_url as string)
-                .then((axiosResponse: AxiosResponse<unknown>) => {
-                    const collection = plainToClassFromExist(new Collection<R>(this.type), axiosResponse.data);
-                    resolve(collection);
-                })
-                .catch(error => {
-                    reject(error);
-                })
         });
     }
 
