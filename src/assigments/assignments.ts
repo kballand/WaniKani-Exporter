@@ -1,8 +1,8 @@
-import { Resource } from "../responses/resource";
-import { Collection } from "../responses/collection";
-import { requestUrl } from "../helpers/helper";
-import { plainToClassFromExist } from "class-transformer";
 import { AxiosResponse } from "axios";
+import { plainToClassFromExist } from "class-transformer";
+import { requestUrl } from "../helpers/helper";
+import { Collection } from "../responses/collection";
+import { Resource } from "../responses/resource";
 
 export class Assignment extends Resource<AssignmentSubject> {
 
@@ -11,7 +11,7 @@ export class Assignment extends Resource<AssignmentSubject> {
             const apiEndpointPath = 'https://api.wanikani.com/v2/assignments';
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Assignment>(Assignment), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Assignment>(Assignment), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {
@@ -30,7 +30,7 @@ export class Assignment extends Resource<AssignmentSubject> {
             const apiEndpointPath = 'https://api.wanikani.com/v2/assignments?subject_types=kanji';
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Assignment>(Assignment), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Assignment>(Assignment), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {
@@ -49,7 +49,7 @@ export class Assignment extends Resource<AssignmentSubject> {
             const apiEndpointPath = 'https://api.wanikani.com/v2/assignments?subject_types=radical';
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Assignment>(Assignment), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Assignment>(Assignment), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {
@@ -68,7 +68,7 @@ export class Assignment extends Resource<AssignmentSubject> {
             const apiEndpointPath = 'https://api.wanikani.com/v2/assignments?subject_types=vocabulary';
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Assignment>(Assignment), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Assignment>(Assignment), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {

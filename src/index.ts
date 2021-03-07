@@ -4,6 +4,15 @@ import { Radical } from './subjects/radical';
 import { Kanji } from './subjects/kanji';
 import { Vocabulary } from './subjects/vocabulary';
 import { Assignment } from './assigments/assignments';
+import { Config } from './helpers/config';
+
+let config : Config;
+
+try {
+    config = Config.loadFromFile("exporter-config.json");
+} catch {
+    config = Config.loadFromFile("exporter-config.default.json");
+}
 
 Assignment.getKanjiAssignments()
     .then(kanjiAssignments => kanjiAssignments.data.map(kanjiAssignment => kanjiAssignment.data.subject_id))

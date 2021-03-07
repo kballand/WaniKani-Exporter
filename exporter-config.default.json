@@ -1,0 +1,4 @@
+{
+    "_comment": "Copy this config and personalize it as exporter-config.json to be independent from git",
+    "token_api": "Your token api here"
+}

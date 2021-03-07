@@ -1,15 +1,19 @@
-import { Exclude, Type } from "class-transformer";
+import { Exclude, Expose, Type } from "class-transformer";
 import { writeFile } from "fs";
 
 export abstract class Response<D> {
     @Exclude()
     protected type: Function;
 
+    @Expose()
     object: ObjectType;
+    @Expose()
     url?: string;
+    @Expose()
     data_updated_at?: string;
 
     @Type(options => { return (options?.newObject as Response<D>)?.type; })
+    @Expose()
     data: D;
 
     constructor(type: Function) {

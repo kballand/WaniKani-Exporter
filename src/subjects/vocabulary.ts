@@ -20,7 +20,7 @@ export class Vocabulary extends Subject<VocabularyContent> {
             const apiEndpointPath = 'https://api.wanikani.com/v2/subjects?types=vocabulary';
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Vocabulary>(Vocabulary), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Vocabulary>(Vocabulary), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {
@@ -43,7 +43,7 @@ export class Vocabulary extends Subject<VocabularyContent> {
             const apiEndpointPath = `https://api.wanikani.com/v2/subjects?ids=${ids.join()}&types=vocabulary`;
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Vocabulary>(Vocabulary), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Vocabulary>(Vocabulary), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {

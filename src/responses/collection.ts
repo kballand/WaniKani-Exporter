@@ -1,13 +1,15 @@
-import { Response } from "./response";
-import { Resource } from "./resource";
+import { AxiosResponse } from "axios";
+import { Expose, plainToClassFromExist } from "class-transformer";
 import { EOL } from "os";
 import { requestUrl } from "../helpers/helper";
-import { AxiosResponse } from "axios";
-import { plainToClassFromExist } from "class-transformer";
+import { Resource } from "./resource";
+import { Response } from "./response";
 
 export class Collection<R extends Resource<unknown>> extends Response<R[]> {
     object: "collection";
+    @Expose()
     pages?: Pagination;
+    @Expose()
     total_count?: number;
 
     toCSV() {
@@ -42,7 +44,7 @@ export class Collection<R extends Resource<unknown>> extends Response<R[]> {
             } else {
                 requestUrl(decodeURIComponent((this.pages as Pagination).next_url as string))
                     .then((axiosResponse: AxiosResponse<unknown>) => {
-                        const collection = plainToClassFromExist(new Collection<R>(this.type), axiosResponse.data);
+                        const collection = plainToClassFromExist(new Collection<R>(this.type), axiosResponse.data, { excludeExtraneousValues: true });
                         resolve(collection);
                     })
                     .catch(error => {
@@ -63,7 +65,7 @@ export class Collection<R extends Resource<unknown>> extends Response<R[]> {
             } else {
                 requestUrl(decodeURIComponent((this.pages as Pagination).previous_url as string))
                     .then((axiosResponse: AxiosResponse<unknown>) => {
-                        const collection = plainToClassFromExist(new Collection<R>(this.type), axiosResponse.data);
+                        const collection = plainToClassFromExist(new Collection<R>(this.type), axiosResponse.data, { excludeExtraneousValues: true });
                         resolve(collection);
                     })
                     .catch(error => {

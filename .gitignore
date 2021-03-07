@@ -104,4 +104,7 @@ dist
 .tern-port
 
 # Data
-data/
+data/**
+
+# Personal config
+exporter-config.json

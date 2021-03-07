@@ -1,10 +1,12 @@
 import axios, { AxiosResponse } from 'axios';
+import { Config } from './config';
 
-const apiToken = 'ea575f3e-c01a-4f20-b37c-414ec5b7d98f';
-const requestHeaders = {
-    Authorization: 'Bearer ' + apiToken
-};
+
 
 export function requestUrl(url: string): Promise<AxiosResponse<unknown>> {
+    const apiToken = Config.getConfig().token_api;
+    const requestHeaders = {
+        Authorization: 'Bearer ' + apiToken
+    };
     return axios.get(url, { headers: requestHeaders });
 }

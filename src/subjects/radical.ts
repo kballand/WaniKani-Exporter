@@ -22,7 +22,7 @@ export class Radical extends Subject<RadicalContent> {
             const apiEndpointPath = 'https://api.wanikani.com/v2/subjects?types=radical';
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Radical>(Radical), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Radical>(Radical), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {
@@ -45,7 +45,7 @@ export class Radical extends Subject<RadicalContent> {
             const apiEndpointPath = `https://api.wanikani.com/v2/subjects?ids=${ids.join()}&types=radical`;
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Radical>(Radical), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Radical>(Radical), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {

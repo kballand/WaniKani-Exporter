@@ -30,7 +30,7 @@ export class Kanji extends Subject<KanjiContent> {
             const apiEndpointPath = 'https://api.wanikani.com/v2/subjects?types=kanji';
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Kanji>(Kanji), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Kanji>(Kanji), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {
@@ -53,7 +53,7 @@ export class Kanji extends Subject<KanjiContent> {
             const apiEndpointPath = `https://api.wanikani.com/v2/subjects?ids=${ids.join()}&types=kanji`;
             requestUrl(apiEndpointPath)
                 .then((axiosResponse: AxiosResponse<unknown>) => {
-                    let collection = plainToClassFromExist(new Collection<Kanji>(Kanji), axiosResponse.data);
+                    let collection = plainToClassFromExist(new Collection<Kanji>(Kanji), axiosResponse.data, { excludeExtraneousValues: true });
                     collection.combinePages()
                         .then(collectionsCombined => {
                             collectionsCombined.sort((a, b) => {
