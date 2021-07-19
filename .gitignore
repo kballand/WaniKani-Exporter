@@ -105,6 +105,7 @@ dist
 
 # Data
 data/**
+!data/.gitkeep 
 
 # Personal config
 exporter-config.json

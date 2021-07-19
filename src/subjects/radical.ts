@@ -41,6 +41,22 @@ export class Radical extends Subject<RadicalContent> {
     }
 
     static getRadicals(ids: number[]): Promise<Collection<Radical>> {
+        const chunk_size = 1000;
+        if (ids.length > chunk_size) {
+            return new Promise<Collection<Radical>>((resolve, reject) => {
+                let i, j, temporary;
+                let promises = [];
+                for (i = 0, j = ids.length; i < j; i += chunk_size) {
+                    temporary = ids.slice(i, i + chunk_size);
+                    promises.push(Radical.getRadicals(temporary))
+                }
+                Promise.all(promises)
+                    .then(results => {
+                        resolve(Collection.combineSpecificPages(results))
+                    })
+                    .catch(reject);
+            })
+        }
         return new Promise<Collection<Radical>>((resolve, reject) => {
             const apiEndpointPath = `https://api.wanikani.com/v2/subjects?ids=${ids.join()}&types=radical`;
             requestUrl(apiEndpointPath)

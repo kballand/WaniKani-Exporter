@@ -49,6 +49,22 @@ export class Kanji extends Subject<KanjiContent> {
     }
 
     static getKanjis(ids: number[]): Promise<Collection<Kanji>> {
+        const chunk_size = 1000;
+        if (ids.length > chunk_size) {
+            return new Promise<Collection<Kanji>>((resolve, reject) => {
+                let i, j, temporary;
+                let promises = [];
+                for (i = 0, j = ids.length; i < j; i += chunk_size) {
+                    temporary = ids.slice(i, i + chunk_size);
+                    promises.push(Kanji.getKanjis(temporary))
+                }
+                Promise.all(promises)
+                    .then(results => {
+                        resolve(Collection.combineSpecificPages(results))
+                    })
+                    .catch(reject);
+            })
+        }
         return new Promise<Collection<Kanji>>((resolve, reject) => {
             const apiEndpointPath = `https://api.wanikani.com/v2/subjects?ids=${ids.join()}&types=kanji`;
             requestUrl(apiEndpointPath)

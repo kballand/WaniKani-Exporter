@@ -39,6 +39,22 @@ export class Vocabulary extends Subject<VocabularyContent> {
     }
 
     static getVocabularies(ids: number[]): Promise<Collection<Vocabulary>> {
+        const chunk_size = 1000;
+        if (ids.length > chunk_size) {
+            return new Promise<Collection<Vocabulary>>((resolve, reject) => {
+                let i, j, temporary;
+                let promises = [];
+                for (i = 0, j = ids.length; i < j; i += chunk_size) {
+                    temporary = ids.slice(i, i + chunk_size);
+                    promises.push(Vocabulary.getVocabularies(temporary))
+                }
+                Promise.all(promises)
+                    .then(results => {
+                        resolve(Collection.combineSpecificPages(results))
+                    })
+                    .catch(reject);
+            })
+        }
         return new Promise<Collection<Vocabulary>>((resolve, reject) => {
             const apiEndpointPath = `https://api.wanikani.com/v2/subjects?ids=${ids.join()}&types=vocabulary`;
             requestUrl(apiEndpointPath)
